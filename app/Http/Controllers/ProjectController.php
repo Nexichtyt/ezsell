@@ -27,7 +27,9 @@ class ProjectController extends Controller
                     'market' => function ($query) {
                         $query->with('owner');
                     }
-                ])->with('buyer')->where('buyer_id', $this->user->id)->orWhere('owner_id', $this->user->id)->where('status', 0)->get()
+                ])->where(function($query) {
+                    $query->where('buyer_id', $this->user->id)->orWhere('owner_id', $this->user->id);
+                })->where('status', 0)->get()
             ] : []
         );
     }
