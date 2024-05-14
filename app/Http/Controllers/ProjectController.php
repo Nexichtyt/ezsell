@@ -93,7 +93,9 @@ class ProjectController extends Controller
             'market' => function ($query) {
                 $query->with(['owner']);
             }
-        ])->where(['buyer_id' => $this->user->id, 'uuid' => $uuid])->orWhere(['owner_id' => $this->user->id, 'uuid' => $uuid])->first();
+        ])->where(function($query) {
+            $query->where('buyer_id', $this->user->id)->orWhere('owner_id', $this->user->id);
+        })->where('uuid', $uuid)->first();
         if(!$p2p) return redirect('/');
         if($p2p->status == 1 || $p2p->status == 2) return redirect('/')->with('success', 'P2P обмен на предмет "' . $p2p->market->info['name'] . '" ' . ($p2p->status == 1 ? 'успешно прошел' : 'отменён'));
         return view(
